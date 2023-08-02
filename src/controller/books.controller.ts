@@ -20,11 +20,20 @@ class BooksController {
   }
 
   async updatedBook(req: Request, res: Response): Promise<Response> {
-    return res.send();
+    const id: number = parseInt(req.params.id);
+    const data = req.body;
+
+    const updatedBook = await bookService.updatedBook(id, data.titulo);
+
+    return res.send(updatedBook);
   }
 
   async deleteBook(req: Request, res: Response): Promise<Response> {
-    return res.send();
+    const id: number = parseInt(req.params.id);
+
+    await bookService.deleteBook(id);
+
+    return res.status(204).send();
   }
 }
 

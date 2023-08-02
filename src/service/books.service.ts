@@ -14,6 +14,24 @@ class BookService {
   async readBooks(): Promise<any[]> {
     return this.books;
   }
+
+  async updatedBook(id: number, title: string): Promise<any> {
+    const index = this.findBook(id);
+    console.log(this.books[index]);
+    this.books[index].titulo = title;
+
+    return this.books[index];
+  }
+
+  async deleteBook(id: number): Promise<void> {
+    const index = this.findBook(id);
+
+    this.books.splice(index, 1);
+  }
+
+  private findBook(id: number): number {
+    return this.books.findIndex((book) => book.id == id);
+  }
 }
 
 const bookService = new BookService();
