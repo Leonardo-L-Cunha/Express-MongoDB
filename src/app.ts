@@ -1,5 +1,12 @@
 import express, { Application } from 'express';
 import booksRoutes from './routers/books.routes';
+import db from './database/db';
+
+db.on('error', console.log.bind(console, 'Erro de connection'));
+db.once('open', () => {
+  console.log('Database is connection!');
+});
+
 const app: Application = express();
 
 app.use(express.json());

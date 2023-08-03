@@ -1,37 +1,33 @@
-import { books } from '../database/db';
-import { BookDto } from '../interfaces/book.interface';
+import { BookDto, BookDtoUpdate } from '../interfaces/book.interface';
+import books from '../models/books.models';
 
 class BookService {
   private books = books;
 
-  async createBook(data: BookDto): Promise<any> {
-    this.books.push(data);
+  async createBook(data: BookDto): Promise<BookDto> {
+    const newBook: BookDto = new books();
 
-    const index = this.books.findIndex((book) => book.id === data.id);
+    Object.assign(newBook, data);
 
-    return this.books[index];
+    const book = await books.create(newBook);
+
+    return book;
   }
 
   async readBooks(): Promise<BookDto[]> {
-    return this.books;
+    const books = this.books.find();
+
+    return books;
   }
 
-  async updatedBook(id: number, title: string): Promise<any> {
-    const index = this.findBook(id);
-    console.log(this.books[index]);
-    this.books[index].titulo = title;
+  async updatedBook(id: string, data: BookDtoUpdate): Promise<BookDto> {
+    const updatedBook = await this.books.findByIdAndUpdate(
+      id,
+      { $set: data },
+      { new: true }
+    );
 
-    return this.books[index];
-  }
-
-  async deleteBook(id: number): Promise<void> {
-    const index = this.findBook(id);
-
-    this.books.splice(index, 1);
-  }
-
-  private findBook(id: number): number {
-    return this.books.findIndex((book) => book.id == id);
+    return updatedBook;
   }
 }
 

@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { bookService } from '../service/books.service';
-import { BookDto } from '../interfaces/book.interface';
+import { BookDto, BookDtoUpdate } from '../interfaces/book.interface';
 
 class BooksController {
   async createBook(req: Request, res: Response): Promise<Response> {
@@ -21,19 +21,15 @@ class BooksController {
   }
 
   async updatedBook(req: Request, res: Response): Promise<Response> {
-    const id: number = parseInt(req.params.id);
-    const data = req.body;
+    const id: string = req.params.id;
+    const data: BookDtoUpdate = req.body;
 
-    const updatedBook = await bookService.updatedBook(id, data.titulo);
+    const updatedBook = await bookService.updatedBook(id, data);
 
     return res.send(updatedBook);
   }
 
   async deleteBook(req: Request, res: Response): Promise<Response> {
-    const id: number = parseInt(req.params.id);
-
-    await bookService.deleteBook(id);
-
     return res.status(204).send();
   }
 }
