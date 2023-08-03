@@ -1,1 +1,3 @@
-export const books: any[] = [];
+import { BookDto } from '../interfaces/book.interface';
+
+export const books: BookDto[] = [];

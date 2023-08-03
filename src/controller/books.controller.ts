@@ -1,9 +1,10 @@
 import { Request, Response } from 'express';
 import { bookService } from '../service/books.service';
+import { BookDto } from '../interfaces/book.interface';
 
 class BooksController {
   async createBook(req: Request, res: Response): Promise<Response> {
-    const data: any = req.body;
+    const data: BookDto = req.body;
 
     const newUser = await bookService.createBook(data);
 

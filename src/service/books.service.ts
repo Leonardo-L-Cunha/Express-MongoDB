@@ -1,9 +1,10 @@
 import { books } from '../database/db';
+import { BookDto } from '../interfaces/book.interface';
 
 class BookService {
   private books = books;
 
-  async createBook(data: any): Promise<any> {
+  async createBook(data: BookDto): Promise<any> {
     this.books.push(data);
 
     const index = this.books.findIndex((book) => book.id === data.id);
@@ -11,7 +12,7 @@ class BookService {
     return this.books[index];
   }
 
-  async readBooks(): Promise<any[]> {
+  async readBooks(): Promise<BookDto[]> {
     return this.books;
   }
 
