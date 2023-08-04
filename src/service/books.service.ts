@@ -15,13 +15,13 @@ class BookService {
   }
 
   async readBooks(): Promise<BookDto[]> {
-    const books = this.books.find();
+    const books = this.books.find().populate('author');
 
     return books;
   }
 
   async readOneBook(id: string): Promise<BookDto> {
-    const findBook = await this.books.findById(id);
+    const findBook = await this.books.findById(id).populate('author');
 
     return findBook!;
   }

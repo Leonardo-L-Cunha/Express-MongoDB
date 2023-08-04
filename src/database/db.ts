@@ -1,8 +1,7 @@
 import mongoose from 'mongoose';
+import 'dotenv/config';
 
-mongoose.connect(
-  'mongodb+srv://leonavidareal:cYTy4otLVRMVgQOf@cluster0.bmjsizq.mongodb.net/leo-node'
-);
+mongoose.connect(process.env.DATABASEURL!);
 
 let db = mongoose.connection;
 
