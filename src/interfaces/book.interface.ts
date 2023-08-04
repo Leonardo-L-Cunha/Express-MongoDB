@@ -1,6 +1,9 @@
+import mongoose from 'mongoose';
+
 export interface BookDto {
+  id?: string;
   title: string;
-  author: string;
+  author: mongoose.Schema.Types.ObjectId;
   publisher: string;
   numberOfPages: number;
 }

@@ -17,7 +17,11 @@ class BooksController {
   }
 
   async readOneBook(req: Request, res: Response): Promise<Response> {
-    return res.send();
+    const id: string = req.params.id;
+
+    const book: BookDto = await bookService.readOneBook(id);
+
+    return res.send(book);
   }
 
   async updatedBook(req: Request, res: Response): Promise<Response> {
@@ -30,6 +34,10 @@ class BooksController {
   }
 
   async deleteBook(req: Request, res: Response): Promise<Response> {
+    const id: string = req.params.id;
+
+    await bookService.deleteBook(id);
+
     return res.status(204).send();
   }
 }

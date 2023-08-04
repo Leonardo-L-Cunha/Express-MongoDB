@@ -1,15 +1,15 @@
 import { BookDto, BookDtoUpdate } from '../interfaces/book.interface';
-import books from '../models/books.models';
+import Books from '../models/books.models';
 
 class BookService {
-  private books = books;
+  private books = Books;
 
   async createBook(data: BookDto): Promise<BookDto> {
-    const newBook: BookDto = new books();
+    const newBook: BookDto = new Books();
 
     Object.assign(newBook, data);
 
-    const book = await books.create(newBook);
+    const book = await this.books.create(newBook);
 
     return book;
   }
@@ -20,6 +20,12 @@ class BookService {
     return books;
   }
 
+  async readOneBook(id: string): Promise<BookDto> {
+    const findBook = await this.books.findById(id);
+
+    return findBook!;
+  }
+
   async updatedBook(id: string, data: BookDtoUpdate): Promise<BookDto> {
     const updatedBook = await this.books.findByIdAndUpdate(
       id,
@@ -27,7 +33,11 @@ class BookService {
       { new: true }
     );
 
-    return updatedBook;
+    return updatedBook!;
+  }
+
+  async deleteBook(id: string): Promise<void> {
+    const findBook = await this.books.findByIdAndDelete(id);
   }
 }
 
