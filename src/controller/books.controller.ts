@@ -1,11 +1,14 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 
 import { BookDto, BookDtoUpdate } from '../interfaces/book.interface';
 import Books from '../models/books.models';
-import mongoose from 'mongoose';
 
 export class BooksController {
-  static async createBook(req: Request, res: Response): Promise<Response> {
+  static async createBook(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response | void> {
     try {
       const data: BookDto = req.body;
 
@@ -17,20 +20,28 @@ export class BooksController {
 
       return res.status(201).json(book);
     } catch (error) {
-      return res.status(500);
+      next(error);
     }
   }
 
-  static async readBook(req: Request, res: Response): Promise<Response> {
+  static async readBook(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response | void> {
     try {
       const books = await Books.find();
       return res.send(books);
     } catch (error) {
-      return res.status(500);
+      next(error);
     }
   }
 
-  static async readOneBook(req: Request, res: Response): Promise<Response> {
+  static async readOneBook(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response | void> {
     try {
       const id: string = req.params.id;
 
@@ -42,14 +53,15 @@ export class BooksController {
 
       return res.send(book);
     } catch (error) {
-      if (error instanceof mongoose.Error.CastError) {
-        return res.status(400).json({ message: 'invalid credentials' });
-      }
-      return res.status(500);
+      next(error);
     }
   }
 
-  static async updatedBook(req: Request, res: Response): Promise<Response> {
+  static async updatedBook(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response | void> {
     try {
       const id: string = req.params.id;
       const data: BookDtoUpdate = req.body;
@@ -62,18 +74,22 @@ export class BooksController {
 
       return res.send(updatedBook);
     } catch (error) {
-      return res.status(500);
+      next(error);
     }
   }
 
-  static async deleteBook(req: Request, res: Response): Promise<Response> {
+  static async deleteBook(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response | void> {
     try {
       const id: string = req.params.id;
       Books.findByIdAndDelete(id);
 
       return res.status(204).send();
     } catch (error) {
-      return res.status(500);
+      next(error);
     }
   }
 }

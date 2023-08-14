@@ -1,10 +1,13 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { AuthorDto, AuthorDtoUpdate } from '../interfaces/author.inteface';
 import Authors from '../models/author.models';
-import mongoose from 'mongoose';
 
 export class AuthorsController {
-  static async createAuthor(req: Request, res: Response): Promise<Response> {
+  static async createAuthor(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response | void> {
     try {
       const data: AuthorDto = req.body;
 
@@ -16,20 +19,28 @@ export class AuthorsController {
 
       return res.status(201).json(author);
     } catch (error) {
-      return res.status(500);
+      next(error);
     }
   }
 
-  static async readAuthor(req: Request, res: Response): Promise<Response> {
+  static async readAuthor(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response | void> {
     try {
       const authors = await Authors.find();
       return res.send(authors);
     } catch (error) {
-      return res.status(500);
+      next(error);
     }
   }
 
-  static async readOneAuthor(req: Request, res: Response): Promise<Response> {
+  static async readOneAuthor(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response | void> {
     try {
       const id: string = req.params.id;
 
@@ -41,14 +52,15 @@ export class AuthorsController {
 
       return res.send(author);
     } catch (error) {
-      if (error instanceof mongoose.Error.CastError) {
-        return res.status(400).json({ message: 'invalid credentials' });
-      }
-      return res.status(500);
+      next(error);
     }
   }
 
-  static async updatedAuthor(req: Request, res: Response): Promise<Response> {
+  static async updatedAuthor(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response | void> {
     try {
       const id: string = req.params.id;
       const data: AuthorDtoUpdate = req.body;
@@ -61,11 +73,15 @@ export class AuthorsController {
 
       return res.send(updatedAuthor);
     } catch (error) {
-      return res.status(500);
+      next(error);
     }
   }
 
-  static async deleteAuthor(req: Request, res: Response): Promise<Response> {
+  static async deleteAuthor(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response | void> {
     try {
       const id: string = req.params.id;
 
@@ -73,7 +89,7 @@ export class AuthorsController {
 
       return res.status(204).send();
     } catch (error) {
-      return res.status(500);
+      next(error);
     }
   }
 }
