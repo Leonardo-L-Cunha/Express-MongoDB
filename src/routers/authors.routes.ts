@@ -1,13 +1,12 @@
 import { Router } from 'express';
-import { authorsController } from '../controller/authors.controller';
-import validatedErro from '../middleware/validatedError';
+import { AuthorsController } from '../controller/authors.controller';
 
 const authorsRoutes: Router = Router();
 
-authorsRoutes.post('', authorsController.createAuthor);
-authorsRoutes.get('', authorsController.readAuthor);
-authorsRoutes.get('/:id', validatedErro, authorsController.readOneAuthor);
-authorsRoutes.put('/:id', authorsController.updatedAuthor);
-authorsRoutes.delete('/:id', authorsController.deleteAuthor);
+authorsRoutes.post('', AuthorsController.createAuthor);
+authorsRoutes.get('', AuthorsController.readAuthor);
+authorsRoutes.get('/:id', AuthorsController.readOneAuthor);
+authorsRoutes.put('/:id', AuthorsController.updatedAuthor);
+authorsRoutes.delete('/:id', AuthorsController.deleteAuthor);
 
 export default authorsRoutes;

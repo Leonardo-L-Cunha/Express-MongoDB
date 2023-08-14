@@ -1,47 +1,79 @@
 import { Request, Response } from 'express';
-import { bookService } from '../service/books.service';
+
 import { BookDto, BookDtoUpdate } from '../interfaces/book.interface';
+import Books from '../models/books.models';
+import mongoose from 'mongoose';
 
-class BooksController {
-  async createBook(req: Request, res: Response): Promise<Response> {
-    const data: BookDto = req.body;
+export class BooksController {
+  static async createBook(req: Request, res: Response): Promise<Response> {
+    try {
+      const data: BookDto = req.body;
 
-    const newUser = await bookService.createBook(data);
+      const newBook: BookDto = new Books();
 
-    return res.status(201).json(newUser);
+      Object.assign(newBook, data);
+
+      const book = await Books.create(newBook);
+
+      return res.status(201).json(book);
+    } catch (error) {
+      return res.status(500);
+    }
   }
 
-  async readBook(req: Request, res: Response): Promise<Response> {
-    const books = await bookService.readBooks();
-    return res.send(books);
+  static async readBook(req: Request, res: Response): Promise<Response> {
+    try {
+      const books = await Books.find();
+      return res.send(books);
+    } catch (error) {
+      return res.status(500);
+    }
   }
 
-  async readOneBook(req: Request, res: Response): Promise<Response> {
-    const id: string = req.params.id;
+  static async readOneBook(req: Request, res: Response): Promise<Response> {
+    try {
+      const id: string = req.params.id;
 
-    const book: BookDto = await bookService.readOneBook(id);
+      const book: BookDto = await Books.findById(id).populate('author');
 
-    return res.send(book);
+      if (!book) {
+        return res.status(404).json({ message: 'Book not found' });
+      }
+
+      return res.send(book);
+    } catch (error) {
+      if (error instanceof mongoose.Error.CastError) {
+        return res.status(400).json({ message: 'invalid credentials' });
+      }
+      return res.status(500);
+    }
   }
 
-  async updatedBook(req: Request, res: Response): Promise<Response> {
-    const id: string = req.params.id;
-    const data: BookDtoUpdate = req.body;
+  static async updatedBook(req: Request, res: Response): Promise<Response> {
+    try {
+      const id: string = req.params.id;
+      const data: BookDtoUpdate = req.body;
 
-    const updatedBook = await bookService.updatedBook(id, data);
+      const updatedBook = await Books.findByIdAndUpdate(
+        id,
+        { $set: data },
+        { new: true }
+      );
 
-    return res.send(updatedBook);
+      return res.send(updatedBook);
+    } catch (error) {
+      return res.status(500);
+    }
   }
 
-  async deleteBook(req: Request, res: Response): Promise<Response> {
-    const id: string = req.params.id;
+  static async deleteBook(req: Request, res: Response): Promise<Response> {
+    try {
+      const id: string = req.params.id;
+      Books.findByIdAndDelete(id);
 
-    await bookService.deleteBook(id);
-
-    return res.status(204).send();
+      return res.status(204).send();
+    } catch (error) {
+      return res.status(500);
+    }
   }
 }
-
-const booksController = new BooksController();
-
-export { booksController };

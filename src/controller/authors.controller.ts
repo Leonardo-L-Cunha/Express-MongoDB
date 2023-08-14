@@ -1,47 +1,79 @@
 import { Request, Response } from 'express';
-import { authorService } from '../service/authors.service';
 import { AuthorDto, AuthorDtoUpdate } from '../interfaces/author.inteface';
+import Authors from '../models/author.models';
+import mongoose from 'mongoose';
 
-class AuthorsController {
-  async createAuthor(req: Request, res: Response): Promise<Response> {
-    const data: AuthorDto = req.body;
+export class AuthorsController {
+  static async createAuthor(req: Request, res: Response): Promise<Response> {
+    try {
+      const data: AuthorDto = req.body;
 
-    const newUser = await authorService.createAuthor(data);
+      const newauthor: AuthorDto = new Authors();
 
-    return res.status(201).json(newUser);
+      Object.assign(newauthor, data);
+
+      const author = await Authors.create(newauthor);
+
+      return res.status(201).json(author);
+    } catch (error) {
+      return res.status(500);
+    }
   }
 
-  async readAuthor(req: Request, res: Response): Promise<Response> {
-    const authors = await authorService.readAuthors();
-    return res.send(authors);
+  static async readAuthor(req: Request, res: Response): Promise<Response> {
+    try {
+      const authors = await Authors.find();
+      return res.send(authors);
+    } catch (error) {
+      return res.status(500);
+    }
   }
 
-  async readOneAuthor(req: Request, res: Response): Promise<Response> {
-    const id: string = req.params.id;
+  static async readOneAuthor(req: Request, res: Response): Promise<Response> {
+    try {
+      const id: string = req.params.id;
 
-    const author: AuthorDto = await authorService.readOneAuthor(id);
+      const author: AuthorDto | null = await Authors.findById(id);
 
-    return res.send(author);
+      if (!author) {
+        return res.status(404).json({ message: 'Book not found' });
+      }
+
+      return res.send(author);
+    } catch (error) {
+      if (error instanceof mongoose.Error.CastError) {
+        return res.status(400).json({ message: 'invalid credentials' });
+      }
+      return res.status(500);
+    }
   }
 
-  async updatedAuthor(req: Request, res: Response): Promise<Response> {
-    const id: string = req.params.id;
-    const data: AuthorDtoUpdate = req.body;
+  static async updatedAuthor(req: Request, res: Response): Promise<Response> {
+    try {
+      const id: string = req.params.id;
+      const data: AuthorDtoUpdate = req.body;
 
-    const updatedauthor = await authorService.updatedAuthor(id, data);
+      const updatedAuthor = await Authors.findByIdAndUpdate(
+        id,
+        { $set: data },
+        { new: true }
+      );
 
-    return res.send(updatedauthor);
+      return res.send(updatedAuthor);
+    } catch (error) {
+      return res.status(500);
+    }
   }
 
-  async deleteAuthor(req: Request, res: Response): Promise<Response> {
-    const id: string = req.params.id;
+  static async deleteAuthor(req: Request, res: Response): Promise<Response> {
+    try {
+      const id: string = req.params.id;
 
-    await authorService.deleteAuthor(id);
+      await Authors.findByIdAndDelete(id);
 
-    return res.status(204).send();
+      return res.status(204).send();
+    } catch (error) {
+      return res.status(500);
+    }
   }
 }
-
-const authorsController = new AuthorsController();
-
-export { authorsController };
