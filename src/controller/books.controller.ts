@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 
 import { BookDto, BookDtoUpdate } from '../interfaces/book.interface';
 import Books from '../models/books.models';
+import { NotFound } from '../errors/NotFound';
 
 export class BooksController {
   static async createBook(
@@ -48,7 +49,7 @@ export class BooksController {
       const book: BookDto = await Books.findById(id).populate('author');
 
       if (!book) {
-        return res.status(404).json({ message: 'Book not found' });
+        next(new NotFound('book not found!'));
       }
 
       return res.send(book);
@@ -72,6 +73,9 @@ export class BooksController {
         { new: true }
       );
 
+      if (!updatedBook) {
+        next(new NotFound('book not found!'));
+      }
       return res.send(updatedBook);
     } catch (error) {
       next(error);
@@ -85,8 +89,10 @@ export class BooksController {
   ): Promise<Response | void> {
     try {
       const id: string = req.params.id;
-      Books.findByIdAndDelete(id);
-
+      const book = Books.findByIdAndDelete(id);
+      if (!book) {
+        next(new NotFound('book not found!'));
+      }
       return res.status(204).send();
     } catch (error) {
       next(error);

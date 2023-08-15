@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { AuthorDto, AuthorDtoUpdate } from '../interfaces/author.inteface';
 import Authors from '../models/author.models';
+import { NotFound } from '../errors/NotFound';
 
 export class AuthorsController {
   static async createAuthor(
@@ -47,7 +48,7 @@ export class AuthorsController {
       const author: AuthorDto | null = await Authors.findById(id);
 
       if (!author) {
-        return res.status(404).json({ message: 'Book not found' });
+        next(new NotFound('author not found!'));
       }
 
       return res.send(author);
@@ -71,6 +72,10 @@ export class AuthorsController {
         { new: true }
       );
 
+      if (!updatedAuthor) {
+        next(new NotFound('author not found!'));
+      }
+
       return res.send(updatedAuthor);
     } catch (error) {
       next(error);
@@ -85,7 +90,11 @@ export class AuthorsController {
     try {
       const id: string = req.params.id;
 
-      await Authors.findByIdAndDelete(id);
+      const author = await Authors.findByIdAndDelete(id);
+
+      if (!author) {
+        next(new NotFound('author not found!'));
+      }
 
       return res.status(204).send();
     } catch (error) {

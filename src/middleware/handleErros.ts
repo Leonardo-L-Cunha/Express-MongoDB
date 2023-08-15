@@ -1,5 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
 import mongoose from 'mongoose';
+import { AppError } from '../errors/AppError';
+import { RequestError } from '../errors/RequestError';
+import { ValidationError } from '../errors/ValidationError';
+import { NotFound } from '../errors/NotFound';
 
 export function handleErros(
   error: Error,
@@ -8,14 +12,16 @@ export function handleErros(
   _: NextFunction
 ) {
   if (error instanceof mongoose.Error.CastError) {
-    return res.status(400).json({ message: 'invalid credentials' });
+    new RequestError().sendRequest(res);
   }
 
   if (error instanceof mongoose.Error.ValidationError) {
-    const errorMensage = Object.values(error.errors).map(
-      (error) => error.message
-    );
-    return res.status(400).json({ message: errorMensage });
+    new ValidationError(error).sendRequest(res);
   }
-  return res.status(500);
+
+  if (error instanceof NotFound) {
+    error.sendRequest(res);
+  }
+
+  new AppError().sendRequest(res);
 }
