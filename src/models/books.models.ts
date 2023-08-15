@@ -10,7 +10,11 @@ const bookSchema = new mongoose.Schema<BookDto>({
     required: true,
   },
   publisher: { type: String, required: true },
-  numberOfPages: { type: Number },
+  numberOfPages: {
+    type: Number,
+    min: 10,
+    max: 5000,
+  },
 });
 
 const Books = mongoose.model('books', bookSchema);

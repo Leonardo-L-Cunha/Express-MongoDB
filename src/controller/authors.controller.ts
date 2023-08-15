@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { AuthorDto, AuthorDtoUpdate } from '../interfaces/author.inteface';
-import Authors from '../models/author.models';
+import { Authors } from '../models/';
 import { NotFound } from '../errors/NotFound';
 
 export class AuthorsController {

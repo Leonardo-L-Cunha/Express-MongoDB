@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 
 import { BookDto, BookDtoUpdate } from '../interfaces/book.interface';
-import Books from '../models/books.models';
+import { Books } from '../models/';
 import { NotFound } from '../errors/NotFound';
 
 export class BooksController {
@@ -31,7 +31,7 @@ export class BooksController {
     next: NextFunction
   ): Promise<Response | void> {
     try {
-      const books = await Books.find();
+      const books = await Books.find().populate('author');
       return res.send(books);
     } catch (error) {
       next(error);
