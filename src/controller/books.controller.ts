@@ -98,4 +98,24 @@ export class BooksController {
       next(error);
     }
   }
+  static async listBookFilter(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response | void> {
+    try {
+      const { publisher, title } = req.query;
+
+      const search: any = {};
+
+      if (publisher) search.publisher = { $regex: publisher, $options: 'i' };
+      if (title) search.title = { $regex: title, $options: 'i' };
+
+      const bookResult = await Books.find(search);
+
+      return res.status(200).send(bookResult);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
