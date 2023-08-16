@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 
 import { BookDto, BookDtoUpdate } from '../interfaces/book.interface';
-import { Books } from '../models/';
+import { Authors, Books } from '../models/';
 import { NotFound } from '../errors/NotFound';
 
 export class BooksController {
@@ -98,24 +98,50 @@ export class BooksController {
       next(error);
     }
   }
+
   static async listBookFilter(
     req: Request,
     res: Response,
     next: NextFunction
   ): Promise<Response | void> {
     try {
-      const { publisher, title } = req.query;
+      const search = await processSearch(req.query);
 
-      const search: any = {};
+      if (search !== null) {
+        const bookResult = await Books.find(search).populate('author');
 
-      if (publisher) search.publisher = { $regex: publisher, $options: 'i' };
-      if (title) search.title = { $regex: title, $options: 'i' };
-
-      const bookResult = await Books.find(search);
-
-      return res.status(200).send(bookResult);
+        return res.status(200).send(bookResult);
+      } else {
+        return res.status(200).send([]);
+      }
     } catch (error) {
       next(error);
     }
   }
+}
+
+async function processSearch(query: any) {
+  const { publisher, title, minPage, maxPage, authorName } = query;
+
+  let search: any = {};
+
+  if (publisher) search.publisher = { $regex: publisher, $options: 'i' };
+  if (title) search.title = { $regex: title, $options: 'i' };
+
+  if (minPage || maxPage) search.numberOfPages = {};
+
+  if (minPage) search.numberOfPages.$gte = minPage;
+  if (maxPage) search.numberOfPages.$lte = maxPage;
+
+  if (authorName) {
+    const author = await Authors.findOne({ name: authorName });
+
+    if (author !== null) {
+      search.author = author._id;
+    } else {
+      search = null;
+    }
+  }
+
+  return search;
 }

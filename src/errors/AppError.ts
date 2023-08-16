@@ -3,7 +3,7 @@ import { Response } from 'express';
 class AppError extends Error {
   message: string;
   statusCode: number;
-  constructor(message: string = 'Internal server error!', statusCode = 400) {
+  constructor(message: string = 'Internal server error!', statusCode = 500) {
     super();
     this.message = message;
     this.statusCode = statusCode;
