@@ -31,8 +31,11 @@ export class BooksController {
     next: NextFunction
   ): Promise<Response | void> {
     try {
-      const books = await Books.find().populate('author');
-      return res.send(books);
+      const resultBook = Books.find();
+
+      req.result = resultBook;
+
+      next();
     } catch (error) {
       next(error);
     }
@@ -108,9 +111,11 @@ export class BooksController {
       const search = await processSearch(req.query);
 
       if (search !== null) {
-        const bookResult = await Books.find(search).populate('author');
+        const bookResult = Books.find(search).populate('author');
 
-        return res.status(200).send(bookResult);
+        req.result = bookResult;
+
+        next();
       } else {
         return res.status(200).send([]);
       }

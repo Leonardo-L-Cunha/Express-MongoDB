@@ -3,7 +3,6 @@ import mongoose from 'mongoose';
 import { AppError } from '../errors/AppError';
 import { RequestError } from '../errors/RequestError';
 import { ValidationError } from '../errors/ValidationError';
-import { NotFound } from '../errors/NotFound';
 
 export function handleErros(
   error: Error,
@@ -19,7 +18,7 @@ export function handleErros(
     new ValidationError(error).sendRequest(res);
   }
 
-  if (error instanceof NotFound) {
+  if (error instanceof AppError) {
     error.sendRequest(res);
   }
 

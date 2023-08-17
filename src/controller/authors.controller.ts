@@ -30,8 +30,11 @@ export class AuthorsController {
     next: NextFunction
   ): Promise<Response | void> {
     try {
-      const authors = await Authors.find();
-      return res.send(authors);
+      const authors = Authors.find();
+
+      req.result = authors;
+
+      next();
     } catch (error) {
       next(error);
     }
