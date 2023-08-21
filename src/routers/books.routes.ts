@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { BooksController } from '../controller/books.controller';
-import { pagination } from '../middleware/Pagination';
+import { pagination } from '../middleware/pagination';
 
 const booksRoutes: Router = Router();
 

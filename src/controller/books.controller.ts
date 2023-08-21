@@ -3,6 +3,7 @@ import { NextFunction, Request, Response } from 'express';
 import { BookDto, BookDtoUpdate } from '../interfaces/book.interface';
 import { Authors, Books } from '../models/';
 import { NotFound } from '../errors/NotFound';
+import { QueryParams } from '../interfaces/query.interface';
 
 export class BooksController {
   static async createBook(
@@ -31,7 +32,7 @@ export class BooksController {
     next: NextFunction
   ): Promise<Response | void> {
     try {
-      const resultBook = Books.find();
+      const resultBook = Books.find().populate('author');
 
       req.result = resultBook;
 
@@ -108,7 +109,8 @@ export class BooksController {
     next: NextFunction
   ): Promise<Response | void> {
     try {
-      const search = await processSearch(req.query);
+      const params = req.query as unknown as QueryParams;
+      const search = await processSearch(params);
 
       if (search !== null) {
         const bookResult = Books.find(search).populate('author');
@@ -125,7 +127,7 @@ export class BooksController {
   }
 }
 
-async function processSearch(query: any) {
+async function processSearch(query: QueryParams) {
   const { publisher, title, minPage, maxPage, authorName } = query;
 
   let search: any = {};

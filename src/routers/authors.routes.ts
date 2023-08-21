@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { AuthorsController } from '../controller/authors.controller';
-import { pagination } from '../middleware/Pagination';
+import { pagination } from '../middleware/pagination';
 
 const authorsRoutes: Router = Router();
 

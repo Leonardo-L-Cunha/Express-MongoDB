@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { AuthorDto, AuthorDtoUpdate } from '../interfaces/author.inteface';
+import { AuthorDto, AuthorDtoUpdate } from '../interfaces/author.interface';
 import { Authors } from '../models/';
 import { NotFound } from '../errors/NotFound';
 

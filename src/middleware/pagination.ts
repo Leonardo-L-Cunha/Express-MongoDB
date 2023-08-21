@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { RequestError } from '../errors/RequestError';
+import { QueryLimit } from '../interfaces/query.interface';
 
 export async function pagination(
   req: Request,
@@ -7,19 +8,22 @@ export async function pagination(
   next: NextFunction
 ) {
   try {
-    let { limit = 5, page = 1, ordernation = 'title:1' }: any = req.query;
+    let {
+      limit = 5,
+      page = 1,
+      ordernation = 'title:1',
+    } = req.query as unknown as QueryLimit;
 
     let [sort, order] = ordernation.split(':');
-    limit = parseInt(limit);
-    page = parseInt(page);
-    order = parseInt(order);
+
+    const NumberOrder = parseInt(order);
 
     const result = req.result;
 
     if (limit > 0 && page > 0) {
       const paginationResult = await result
         .find()
-        .sort({ [sort]: order })
+        .sort({ [sort]: NumberOrder })
         .skip((page - 1) * limit)
         .limit(limit);
 
