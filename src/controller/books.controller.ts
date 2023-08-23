@@ -50,7 +50,7 @@ export class BooksController {
     try {
       const id: string = req.params.id;
 
-      const book: BookDto = await Books.findById(id).populate('author');
+      const book: BookDto | null = await Books.findById(id).populate('author');
 
       if (!book) {
         next(new NotFound('book not found!'));
