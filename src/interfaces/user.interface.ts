@@ -3,6 +3,7 @@ export interface UserDTO {
   name: string;
   email: string;
   password: string;
+  supervisor?: boolean;
 }
 
 export interface UserDTOUpdate {

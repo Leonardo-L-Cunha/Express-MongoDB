@@ -26,6 +26,7 @@ export class UsersController {
         name: data.name,
         email: data.email,
         password: hashPassoword,
+        supervisor: data.supervisor || false,
       });
 
       const user = await Users.create(newUser);
@@ -87,7 +88,7 @@ export class UsersController {
     try {
       const id: string = req.params.id;
 
-      const updatedUser = Users.findByIdAndDelete(id);
+      const updatedUser = await Users.findByIdAndDelete(id);
 
       if (!updatedUser) {
         next(new NotFound('User not found!'));

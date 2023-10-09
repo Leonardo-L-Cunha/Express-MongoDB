@@ -7,6 +7,7 @@ const userSchema = new mongoose.Schema<UserDTO>(
     name: { type: String, required: true },
     email: { type: String, unique: true },
     password: { type: String, required: true },
+    supervisor: { type: Boolean },
   },
   { versionKey: false }
 );
