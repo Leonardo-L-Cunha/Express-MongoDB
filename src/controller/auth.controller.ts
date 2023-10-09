@@ -1,11 +1,42 @@
 import { NextFunction, Request, Response } from 'express';
 import { UserDTO } from '../interfaces/user.interface';
 import { Users } from '../models';
-
+import { RequestError } from '../errors/RequestError';
+import { sign } from 'jsonwebtoken';
+import { compare } from 'bcryptjs';
+import 'dotenv/config';
 export class AuthController {
   static async login(req: Request, res: Response, next: NextFunction) {
-    const user: UserDTO = req.body;
+    try {
+      const user: UserDTO = req.body;
 
-    const findUser = Users.findOne({ email: user.email });
+      const findUser = await Users.findOne({ email: user.email });
+
+      if (!findUser) {
+        throw new RequestError();
+      }
+      const passwordMath = await compare(user.password, findUser.password);
+
+      if (!passwordMath) {
+        throw new RequestError();
+      }
+      console.log(passwordMath);
+      const token: string = sign(
+        {
+          id: findUser.id,
+          email: findUser.email,
+        },
+        process.env.SECRET_KEY!,
+        {
+          expiresIn: 86400,
+        }
+      );
+
+      return res.status(200).json({
+        token: token,
+      });
+    } catch (error) {
+      next(error);
+    }
   }
 }

@@ -6,7 +6,7 @@ const userSchema = new mongoose.Schema<UserDTO>(
     id: { type: String },
     name: { type: String, required: true },
     email: { type: String, unique: true },
-    password: { type: String, required: true, select: false },
+    password: { type: String, required: true },
   },
   { versionKey: false }
 );
