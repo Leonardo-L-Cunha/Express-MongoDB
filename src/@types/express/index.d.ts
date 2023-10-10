@@ -5,6 +5,10 @@ declare global {
   namespace Express {
     interface Request {
       result: BookDto | AuthorDto;
+      user: {
+        id: string;
+        supervisor: boolean;
+      };
     }
   }
 }
