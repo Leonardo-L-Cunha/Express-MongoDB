@@ -24,7 +24,7 @@ export class AuthController {
       const token: string = sign(
         {
           id: findUser.id,
-          email: findUser.email,
+          supervisor: findUser.supervisor,
         },
         process.env.SECRET_KEY!,
         {
