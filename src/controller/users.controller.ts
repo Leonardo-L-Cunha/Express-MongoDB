@@ -38,7 +38,7 @@ export class UsersController {
   }
 
   static async ListUsers(req: Request, res: Response, next: NextFunction) {
-    const users: UserDTO[] = await Users.find();
+    const users: UserDTO[] = await Users.find({}, { password: 0 });
 
     return res.send(users);
   }
@@ -47,7 +47,7 @@ export class UsersController {
     try {
       const id: string = req.params.id;
 
-      const user: UserDTO | null = await Users.findById(id);
+      const user: UserDTO | null = await Users.findById(id, { password: 0 });
 
       if (!user) {
         next(new NotFound('User not found!'));
