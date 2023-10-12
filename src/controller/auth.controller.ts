@@ -20,11 +20,10 @@ export class AuthController {
       if (!passwordMath) {
         throw new RequestError();
       }
-      console.log(passwordMath);
+
       const token: string = sign(
         {
-          id: findUser.id,
-          supervisor: findUser.supervisor,
+          id: findUser._id.toString(),
         },
         process.env.SECRET_KEY!,
         {
