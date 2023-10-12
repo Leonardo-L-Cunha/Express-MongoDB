@@ -7,7 +7,6 @@ declare global {
       result: BookDto | AuthorDto;
       user: {
         id: string;
-        supervisor: boolean;
       };
     }
   }
